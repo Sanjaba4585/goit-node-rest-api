@@ -58,12 +58,3 @@ export async function updateContactById(id, data) {
   return contacts[contactIndex];
 }
 
-// export async function updateContactFavoriteStatus(id, favorite) {
-//   const updateContact = await Contact;
-// }
-// module.exports = {
-//   listContacts,
-//   getContactById,
-//   addContact,
-//   removeContact,
-// };
