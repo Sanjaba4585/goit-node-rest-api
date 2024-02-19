@@ -45,6 +45,22 @@ export async function removeContact(contactId) {
   await writeContacts(contacts, null, 2);
   return result;
 }
+
+export async function updateContactById(id, data) {
+  const contacts = await listContacts();
+  const contactIndex = contacts.findIndex((contact) => contact.id === id);
+  if (contactIndex === -1) {
+    return null;
+  }
+  const contactById = contacts.find((contact) => contact.id === id);
+  contacts[contactIndex] = { id, ...contactById, ...data };
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  return contacts[contactIndex];
+}
+
+// export async function updateContactFavoriteStatus(id, favorite) {
+//   const updateContact = await Contact;
+// }
 // module.exports = {
 //   listContacts,
 //   getContactById,
