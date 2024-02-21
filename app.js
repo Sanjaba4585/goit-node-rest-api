@@ -23,7 +23,7 @@ app.use((err, req, res, next) => {
 });
 
 const DB_HOST =
-  "mongodb+srv://Sanjaba4585:S9Xvtz193mIYauKF@cluster0.caizffu.mongodb.net/books_reader?retryWrites=true&w=majority";
+  "mongodb+srv://Sanjaba4585:S9Xvtz193mIYauKF@cluster0.caizffu.mongodb.net/db-contacts?retryWrites=true&w=majority";
 
 mongoose.set("strictQuery", true);
 mongoose
