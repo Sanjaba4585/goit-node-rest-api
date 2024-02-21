@@ -2,9 +2,8 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
-
 import contactsRouter from "./routes/contactsRouter.js";
-
+import { DB_HOST } from "./config.js";
 const app = express();
 
 app.use(morgan("tiny"));
@@ -21,9 +20,6 @@ app.use((err, req, res, next) => {
   const { status = 500, message = "Server error" } = err;
   res.status(status).json({ message });
 });
-
-const DB_HOST =
-  "mongodb+srv://Sanjaba4585:S9Xvtz193mIYauKF@cluster0.caizffu.mongodb.net/db-contacts?retryWrites=true&w=majority";
 
 mongoose.set("strictQuery", true);
 mongoose

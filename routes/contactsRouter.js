@@ -26,13 +26,3 @@ contactsRouter.put("/:id", validateBody(updateContactSchema), updateContact);
 
 export default contactsRouter;
 
-// const express = require("express");
-// const contactsRouter = express.Router();
-// const contacts = require("../services/contactsServices");
-// const router = express.Router();
-
-// router.get("/", async (req, res) => {});
-// const result = await contacts.getAll();
-// res.json(result);
-
-// module.exports = router;
