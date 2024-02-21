@@ -3,7 +3,7 @@ import morgan from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
 import contactsRouter from "./routes/contactsRouter.js";
-import { DB_HOST } from "./config.js";
+
 const app = express();
 
 app.use(morgan("tiny"));
@@ -21,6 +21,7 @@ app.use((err, req, res, next) => {
   res.status(status).json({ message });
 });
 
+const { DB_HOST } = process.env;
 mongoose.set("strictQuery", true);
 mongoose
   .connect(DB_HOST)
