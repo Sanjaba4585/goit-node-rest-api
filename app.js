@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
 import contactsRouter from "./routes/contactsRouter.js";
+import dotenv from "dotenv";
 
 const app = express();
 
@@ -11,6 +12,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/contacts", contactsRouter);
+
+dotenv.config();
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
@@ -22,6 +25,7 @@ app.use((err, req, res, next) => {
 });
 
 const { DB_HOST } = process.env;
+
 mongoose.set("strictQuery", true);
 mongoose
   .connect(DB_HOST)
