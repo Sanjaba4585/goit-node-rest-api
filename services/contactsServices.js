@@ -1,18 +1,18 @@
 import fs from "fs/promises";
 import path from "path";
 import crypto from "crypto";
-const contactsPath = path.resolve("db", "contacts.json");
+import { Contact } from "../models/contact.js";
+
+// const contactsPath = path.resolve("db", "contacts.json");
 
 async function readContacts() {
-  const data = await fs.readFile(contactsPath, {
-    encoding: "utf-8",
-  });
+  const data = await Contact.find();
 
   return JSON.parse(data);
 }
 
 function writeContacts(contacts) {
-  return fs.writeFile(contactsPath, JSON.stringify(contacts, undefined, 2));
+  return fs.writeFile(Contact.find(), JSON.stringify(contacts, undefined, 2));
 }
 
 export async function listContacts() {
@@ -57,4 +57,3 @@ export async function updateContactById(id, data) {
   await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
   return contacts[contactIndex];
 }
-
