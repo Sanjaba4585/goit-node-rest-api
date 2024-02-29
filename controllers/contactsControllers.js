@@ -8,12 +8,8 @@ import * as contactsService from "../services/contactsServices.js";
 
 export const getAllContacts = async (req, res, next) => {
   try {
-    const { error } = createContactSchema(req.body);
-    if (error) {
-      next(HttpError(400, error.message));
-    }
     const result = await contactsService.listContacts();
-    res.send(result);
+    res.json(result);
   } catch (error) {
     next(error);
   }
