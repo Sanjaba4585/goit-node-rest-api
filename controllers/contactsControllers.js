@@ -1,9 +1,4 @@
 import HttpError from "../helpers/HttpError.js";
-import {
-  createContactSchema,
-  updateContactSchema,
-  updateFavoriteSchema,
-} from "../schemas/contactsSchemas.js";
 import * as contactsService from "../services/contactsServices.js";
 
 export const getAllContacts = async (req, res, next) => {
@@ -36,7 +31,7 @@ export const deleteContact = async (req, res, next) => {
     if (result) {
       res.status(200).json(result);
     } else {
-      res.status(404).json({ message: "Route not found" });
+      throw HttpError(404, "Not found");
     }
   } catch (error) {
     next(error);
@@ -54,10 +49,6 @@ export const createContact = async (req, res, next) => {
 
 export const updateContact = async (req, res, next) => {
   try {
-    const { error } = updateContactSchema(req.body);
-    if (error) {
-      throw HttpError(400, error.message);
-    }
     const { id } = req.params;
     const result = await contactsService.updateContactById(id, req.body);
     if (!result) {
@@ -71,10 +62,6 @@ export const updateContact = async (req, res, next) => {
 
 export const updateStatusContact = async (req, res, next) => {
   try {
-    const { error } = updateFavoriteSchema(req.body);
-    if (error) {
-      throw HttpError(400, error.message);
-    }
     const { id } = req.params;
     const result = await contactsService.updateContactById(id, req.body);
     if (!result) {
