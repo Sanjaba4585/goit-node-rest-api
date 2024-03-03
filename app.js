@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import contactsRouter from "./routes/contactsRouter.js";
 import "dotenv/config";
 import { configDotenv } from "dotenv";
+import authRouter from "./routes/auth.js";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 configDotenv();
 app.use("/api/contacts", contactsRouter);
+app.use("/users", authRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
@@ -38,7 +40,4 @@ mongoose
     process.exit(1);
   });
 
-// app.listen(3000, () => {
-//   console.log("Server is running. Use our API on port: 3000");
-// });
 export default app;
