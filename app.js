@@ -6,6 +6,7 @@ import contactsRouter from "./routes/contactsRouter.js";
 import "dotenv/config";
 import { configDotenv } from "dotenv";
 import authRouter from "./routes/auth.js";
+import { auth } from "./middleware/auth.js";
 
 const app = express();
 
@@ -13,7 +14,7 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 configDotenv();
-app.use("/api/contacts", contactsRouter);
+app.use("/api/contacts", auth, contactsRouter);
 app.use("/users", authRouter);
 
 app.use((_, res) => {

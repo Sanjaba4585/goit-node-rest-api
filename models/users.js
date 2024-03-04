@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { handleMongooseError } from "../helpers/handleMongooseError.js";
 
 const userSchema = new Schema({
   password: {
@@ -21,4 +22,5 @@ const userSchema = new Schema({
   },
 });
 
+userSchema.post("save", handleMongooseError);
 export const User = model("user", userSchema);
