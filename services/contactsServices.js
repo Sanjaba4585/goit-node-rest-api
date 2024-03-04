@@ -1,9 +1,7 @@
 import { Contact } from "../models/contact.js";
-import { info } from "console";
-import { promises as fs } from "fs";
 
-export async function listContacts() {
-  const contacts = await Contact.find();
+export async function listContacts(owner) {
+  const contacts = await Contact.find(owner).populate("owner", "name email");
   return contacts;
 }
 

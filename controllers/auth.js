@@ -3,6 +3,7 @@ import { User } from "../models/users.js";
 import { registerSchema } from "../schemas/userSchema.js";
 import "dotenv/config";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const register = async (req, res, next) => {
   const { email, password } = req.body;
@@ -46,7 +47,11 @@ export const login = async (req, res, next) => {
     if (isMatch === false) {
       throw HttpError(401, "Email or password is wrong");
     }
-    res.status(200).json({ token: user.token });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "24h",
+    });
+    await User.findByIdAndUpdate(user._id, { token });
+    res.status(200).json({ token });
   } catch (error) {
     next(error);
   }
@@ -54,7 +59,17 @@ export const login = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
+    await User.findByIdAndUpdate(req.user.id, { token: null });
     res.status(204).json();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getCurrent = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+    res.status(200).json(user);
   } catch (error) {
     next(error);
   }

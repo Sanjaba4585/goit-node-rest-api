@@ -1,10 +1,12 @@
 import express from "express";
-import { login, register } from "../controllers/auth.js";
-import validateBody from "../helpers/validateBody.js";
-import { registerSchema } from "../schemas/userSchema.js";
+import { login, logout, register } from "../controllers/auth.js";
+import { auth } from "../middleware/auth.js";
 
 const authRouter = express.Router();
 
-authRouter.post("/register", validateBody(registerSchema), register);
+authRouter.post("/register", register);
 authRouter.post("/login", login);
+authRouter.get("/logout", auth, logout);
+authRouter.post("/current", auth, getCurrent);
+
 export default authRouter;
