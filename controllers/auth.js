@@ -6,10 +6,9 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const register = async (req, res, next) => {
-  const { email, password } = req.body;
-  const normalizedEmail = email.toLowerCase();
-
   try {
+    const { email, password } = req.body;
+    const normalizedEmail = email.toLowerCase();
     const user = await User.findOne({ email: normalizedEmail });
     const { error } = registerSchema.validate(req.body);
 
@@ -36,9 +35,9 @@ export const register = async (req, res, next) => {
 };
 
 export const login = async (req, res, next) => {
-  const { email, password } = req.body;
-  const normalizedEmail = email.toLowerCase();
   try {
+    const { email, password } = req.body;
+    const normalizedEmail = email.toLowerCase();
     const user = await User.findOne({ email: normalizedEmail });
     if (user === null) {
       throw HttpError(401, "Email or password is wrong");
@@ -60,17 +59,13 @@ export const login = async (req, res, next) => {
 export const logout = async (req, res, next) => {
   try {
     await User.findByIdAndUpdate(req.user.id, { token: null });
-    res.status(204).json();
+    res.send.status(204).json();
   } catch (error) {
     next(error);
   }
 };
 
 export const getCurrent = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.user.id);
-    res.status(200).json(user);
-  } catch (error) {
-    next(error);
-  }
+  const { email, id } = req.user;
+  res.json({ email, id });
 };
