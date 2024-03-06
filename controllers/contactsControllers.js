@@ -17,6 +17,9 @@ export const getOneContact = async (req, res, next) => {
     const result = await contactsService.getContactById(id);
     if (!result) {
       throw HttpError(404, "Not found");
+    }
+    if (result.owner.toString() !== req.user.id) {
+      throw HttpError(401, "Not authorized");
     } else {
       res.status(200).json(result);
     }
