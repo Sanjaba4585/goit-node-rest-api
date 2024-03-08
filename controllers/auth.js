@@ -50,7 +50,7 @@ export const login = async (req, res, next) => {
       expiresIn: "24h",
     });
     await User.findByIdAndUpdate(user._id, { token });
-    res.status(200).json({ token });
+    res.json({ token });
   } catch (error) {
     next(error);
   }
@@ -59,13 +59,23 @@ export const login = async (req, res, next) => {
 export const logout = async (req, res, next) => {
   try {
     await User.findByIdAndUpdate(req.user.id, { token: null });
-    res.send.status(204).json();
+    res.send.status(204).send();
   } catch (error) {
     next(error);
   }
 };
 
 export const getCurrent = async (req, res, next) => {
-  const { email, id } = req.user;
-  res.json({ email, id });
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      throw HttpError(401, "Not Found");
+    }
+    res.status(200).json({
+      email: user.email,
+      subscription: user.subscription,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
