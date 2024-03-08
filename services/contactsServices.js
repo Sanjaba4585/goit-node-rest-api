@@ -5,8 +5,8 @@ export async function listContacts(owner) {
   return contacts;
 }
 
-export async function getContactById(contactId) {
-  const result = await Contact.findById(contactId);
+export async function getContactById(_id, owner) {
+  const result = await Contact.findOne({ owner, _id });
   return result || null;
 }
 
@@ -15,8 +15,8 @@ export async function addContact(info) {
   return newContact;
 }
 
-export async function removeContact(contactId) {
-  const result = await Contact.findByIdAndDelete(contactId);
+export async function removeContact(_id, owner) {
+  const result = await Contact.findByIdAndDelete({ _id, owner });
   return result;
 }
 
