@@ -59,7 +59,7 @@ export const login = async (req, res, next) => {
 export const logout = async (req, res, next) => {
   try {
     await User.findByIdAndUpdate(req.user.id, { token: null });
-    res.send.status(204).send();
+    res.status(204).send();
   } catch (error) {
     next(error);
   }
@@ -67,7 +67,7 @@ export const logout = async (req, res, next) => {
 
 export const getCurrent = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findOneAndUpdate(req.user._id);
     if (!user) {
       throw HttpError(401, "Not Found");
     }

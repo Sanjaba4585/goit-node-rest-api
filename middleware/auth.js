@@ -27,7 +27,7 @@ export const auth = (req, res, next) => {
       throw HttpError(401, "Not authorized");
     }
     req.user = {
-      id: decoded.id,
+      _id: decoded.id,
       name: decoded.name,
     };
   });
