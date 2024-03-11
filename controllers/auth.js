@@ -26,8 +26,10 @@ export const register = async (req, res, next) => {
     });
 
     res.status(201).json({
-      password: newUser.password,
-      email: newUser.email,
+      user: {
+        email: newUser.email,
+        subscription: newUser.subscription,
+      },
     });
   } catch (error) {
     next(error);
@@ -46,7 +48,10 @@ export const login = async (req, res, next) => {
     if (isMatch === false) {
       throw HttpError(401, "Email or password is wrong");
     }
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const payload = {
+      id: user._id,
+    };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "24h",
     });
     await User.findByIdAndUpdate(user._id, { token });
@@ -58,7 +63,8 @@ export const login = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
-    await User.findByIdAndUpdate(req.user.id, { token: null });
+    const { _id } = req.user;
+    await User.findByIdAndUpdate(_id, { token: null });
     res.status(204).send();
   } catch (error) {
     next(error);
@@ -67,13 +73,13 @@ export const logout = async (req, res, next) => {
 
 export const getCurrent = async (req, res, next) => {
   try {
-    const user = await User.findOneAndUpdate(req.user._id);
+    const { email, subscription } = req.user;
     if (!user) {
       throw HttpError(401, "Not Found");
     }
     res.status(200).json({
-      email: user.email,
-      subscription: user.subscription,
+      email,
+      subscription,
     });
   } catch (error) {
     next(error);
