@@ -14,15 +14,15 @@ export const getAllContacts = async (req, res, next) => {
 export const getOneContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await contactsService.getContactById(id, req.user._id);
+    const { _id: owner } = req.user;
+    const result = await contactsService
+      .getContactById(id)
+      .where("owner")
+      .equals(owner);
     if (!result) {
       throw HttpError(404, "Not found");
     }
-    if (result.owner.toString() !== req.user.id) {
-      throw HttpError(401, "Not authorized");
-    } else {
-      res.status(200).json(result);
-    }
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
@@ -31,7 +31,11 @@ export const getOneContact = async (req, res, next) => {
 export const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await contactsService.removeContact(id, req.user._id);
+    const { _id: owner } = req.user;
+    const result = await contactsService
+      .removeContact(id)
+      .where("owner")
+      .equals(owner);
     if (result) {
       res.status(200).json(result);
     } else {
@@ -55,7 +59,12 @@ export const createContact = async (req, res, next) => {
 export const updateContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await contactsService.updateContactById(id, req.user._id);
+    const { _id: owner } = req.user;
+    const result = await contactsService.updateContactById(
+      id,
+      req.body,
+      { new: true }.where("owner").equals(owner)
+    );
     if (!result) {
       throw HttpError(404, "Not found");
     }
@@ -68,7 +77,12 @@ export const updateContact = async (req, res, next) => {
 export const updateStatusContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await contactsService.updateContactById(id, req.user._id);
+    const { _id: owner } = req.user;
+    const result = await contactsService.updateContactById(
+      id,
+      req.body,
+      { new: true }.where("owner").equals(owner)
+    );
     if (!result) {
       throw HttpError(404, "Not found");
     }
