@@ -14,7 +14,7 @@ app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 configDotenv();
-app.use("/api/contacts", auth, contactsRouter);
+app.use("/api/contacts", contactsRouter);
 app.use("/users", authRouter);
 
 app.use((_, res) => {
