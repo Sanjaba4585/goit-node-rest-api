@@ -16,11 +16,11 @@ export async function addContact(info) {
 }
 
 export async function removeContact(_id, owner) {
-  const result = await Contact.findByIdAndDelete({ _id, owner });
+  const result = await Contact.findOneAndDelete({ _id, owner });
   return result;
 }
 
 export async function updateContactById(id, data) {
-  const contacts = await Contact.findByIdAndUpdate(id, data, { new: true });
+  const contacts = await Contact.findOneAndUpdate(id, data, { new: true });
   return contacts;
 }
