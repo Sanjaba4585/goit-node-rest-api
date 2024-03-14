@@ -13,12 +13,11 @@ export const getAllContacts = async (req, res, next) => {
 
 export const getOneContact = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { _id: owner } = req.user;
-    const result = await contactsService
-      .getContactById(id)
-      .where("owner")
-      .equals(owner);
+    const result = await contactsService.getContactById({
+      _id: req.params.id,
+      owner: req.user._id,
+    });
+
     if (!result) {
       throw HttpError(404, "Not found");
     }
@@ -31,11 +30,11 @@ export const getOneContact = async (req, res, next) => {
 export const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { _id: owner } = req.user;
-    const result = await contactsService
-      .removeContact(id)
-      .where("owner")
-      .equals(owner);
+    const result = await contactsService.removeContact({
+      _id: id,
+      owner: req.user._id,
+    });
+
     if (result) {
       res.status(200).json(result);
     } else {
@@ -59,11 +58,10 @@ export const createContact = async (req, res, next) => {
 export const updateContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { _id: owner } = req.user;
     const result = await contactsService.updateContactById(
-      id,
+      { _id: id, owner: req.user.id },
       req.body,
-      { new: true }.where("owner").equals(owner)
+      { new: true }
     );
     if (!result) {
       throw HttpError(404, "Not found");
@@ -76,12 +74,12 @@ export const updateContact = async (req, res, next) => {
 
 export const updateStatusContact = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { _id: owner } = req.user;
+    const { contactId } = req.params;
+    const { favorite } = req.body;
     const result = await contactsService.updateContactById(
-      id,
-      req.body,
-      { new: true }.where("owner").equals(owner)
+      { _id: contactId, owner: req.user.id },
+      { favorite },
+      { new: true }
     );
     if (!result) {
       throw HttpError(404, "Not found");
