@@ -7,6 +7,7 @@ import "dotenv/config";
 import { configDotenv } from "dotenv";
 import authRouter from "./routes/auth.js";
 import { auth } from "./middleware/auth.js";
+import userRouter from "./routes/userAvatarRouter.js";
 
 const app = express();
 
@@ -15,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 configDotenv();
 app.use("/api/contacts", auth, contactsRouter);
-app.use("/users", authRouter);
+app.use("/users", authRouter, userRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
