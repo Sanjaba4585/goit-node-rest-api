@@ -5,7 +5,18 @@ import "dotenv/config";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import gravatar from "gravatar";
+import nodemailer from "nodemailer";
+import { nanoid } from "nanoid";
 
+const { JWT_SECRET, BASE_URL } = process.env;
+const transport = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD,
+  },
+});
 
 export const register = async (req, res, next) => {
   try {
@@ -21,9 +32,18 @@ export const register = async (req, res, next) => {
       throw HttpError(409, "Email in use");
     }
     const avatarURL = gravatar.url(email);
+    const verificationToken = nanoid();
     const hashPassword = await bcrypt.hash(password, 10);
+
+    transport.sendMail({
+      to: email,
+      from: "klo4585@gmail.com",
+      subject: "Verify your email",
+      html: `<a target ="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Verify your email</a>`,
+    });
     const newUser = await User.create({
       ...req.body,
+      verificationToken,
       email: normalizedEmail,
       password: hashPassword,
       avatarURL,
@@ -49,6 +69,9 @@ export const login = async (req, res, next) => {
     if (user === null) {
       throw HttpError(401, "Email or password is wrong");
     }
+    if (user.verify === false) {
+      throw HttpError(401, "Email not verified");
+    }
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch === false) {
       throw HttpError(401, "Email or password is wrong");
@@ -56,6 +79,7 @@ export const login = async (req, res, next) => {
     const payload = {
       id: user._id,
     };
+
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "24h",
     });
@@ -86,6 +110,45 @@ export const getCurrent = async (req, res, next) => {
       email,
       subscription,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verify = async (req, res, next) => {
+  const { verificationToken } = req.params;
+  try {
+    const user = await User.findOne({ verificationToken });
+    if (user === null) {
+      throw HttpError(404, "User not found");
+    }
+    await User.findByIdAndUpdate(user._id, {
+      verify: true,
+      verificationToken: null,
+    });
+    res.json({ message: "Verification successful" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const repeatEmail = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw HttpError(404, "User not found");
+    }
+    if (user.verify) {
+      throw HttpError(400, "Verification has already been passed");
+    }
+    transport.sendMail({
+      to: email,
+      from: "klo4585@gmail.com",
+      subject: "Verify your email",
+      html: `<a target ="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Verify your email</a>`,
+    });
+    res.json({ message: "Verification email sent" });
   } catch (error) {
     next(error);
   }
